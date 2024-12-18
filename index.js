@@ -39,12 +39,12 @@ let externalVBSFolderLocation
 
 function handleErrorsAndClose(child, callback) {
 	let error
-	child.once('error', function (e) {
+	child.once('error', function(e) {
 		debug('process error %s', e)
 		error = e
 	})
 
-	child.once('close', function (code) {
+	child.once('close', function(code) {
 		debug('process exit with code %d', code)
 
 		if (error) {
@@ -74,12 +74,12 @@ function execute(args, callback) {
 
 	debug(args)
 
-	cscript.init(function (err) {
+	cscript.init(function(err) {
 		if (err) {
 			return callback(err)
 		}
 
-		childProcess.execFile(cscript.path(), args, function (err, stdout, stderr) {
+		childProcess.execFile(cscript.path(), args, function(err, stdout, stderr) {
 
 			if (err) {
 				if (stdout) {
@@ -123,7 +123,7 @@ function execute(args, callback) {
 }
 
 function spawnEx(args, keys, callback) {
-	cscript.init(function (err) {
+	cscript.init(function(err) {
 		if (err) {
 			return callback(err)
 		}
@@ -151,13 +151,13 @@ function renderValueByType(value, type) {
 
 		case 'REG_BINARY':
 			if (!Array.isArray(value)) {
-				throw new Error('invalid value type ' + typeof (value) + ' for registry type REG_BINARY, please use an array of numbers')
+				throw new Error('invalid value type ' + typeof(value) + ' for registry type REG_BINARY, please use an array of numbers')
 			}
 			return value.join(',')
 
 		case 'REG_MULTI_SZ':
 			if (!Array.isArray(value)) {
-				throw new Error('invalid value type ' + typeof (value) + ' for registry type REG_BINARY, please use an array of strings')
+				throw new Error('invalid value type ' + typeof(value) + ' for registry type REG_BINARY, please use an array of strings')
 			}
 			return value.join(',')
 
@@ -177,7 +177,7 @@ function baseCommand(cmd, arch) {
 	let scriptPath
 
 	// test undefined, null and empty string
-	if (externalVBSFolderLocation && typeof (externalVBSFolderLocation) === 'string') {
+	if (externalVBSFolderLocation && typeof(externalVBSFolderLocation) === 'string') {
 		scriptPath = externalVBSFolderLocation
 	} else {
 		scriptPath = path.join(__dirname, 'vbs')
@@ -200,7 +200,7 @@ function toCommandArgs(cmd, arch, keys) {
 	return result
 }
 
-module.exports.setExternalVBSLocation = function (newLocation) {
+module.exports.setExternalVBSLocation = function(newLocation) {
 	if (fs.existsSync(newLocation)) {
 		externalVBSFolderLocation = newLocation
 		return 'Folder found and set'
@@ -209,7 +209,7 @@ module.exports.setExternalVBSLocation = function (newLocation) {
 	return 'Folder not found'
 }
 
-module.exports.list = function (keys, architecture, callback) {
+module.exports.list = function(keys, architecture, callback) {
 	//console.log('list with callback will be deprecated in future versions, use list streaming interface')
 
 	if (architecture === undefined) {
@@ -231,14 +231,14 @@ module.exports.list = function (keys, architecture, callback) {
 
 	const outputStream = through2.obj(helper.vbsOutputTransform)
 
-	cscript.init(function (err) {
+	cscript.init(function(err) {
 		if (err) {
 			return outputStream.emit('error', err)
 		}
 
 		const args = baseCommand('regListStream.wsf', architecture)
 
-		const child = execFile(cscript.path(), args, { encoding: 'utf8' }, function (err) {
+		const child = execFile(cscript.path(), args, { encoding: 'utf8' }, function(err) {
 			if (err) {
 				outputStream.emit('error', err)
 			}
@@ -256,7 +256,7 @@ module.exports.list = function (keys, architecture, callback) {
 	return outputStream
 }
 
-module.exports.createKey = function (keys, architecture, callback) {
+module.exports.createKey = function(keys, architecture, callback) {
 	if (typeof architecture === 'function') {
 		callback = architecture
 		architecture = OS_ARCH_AGNOSTIC
@@ -271,7 +271,7 @@ module.exports.createKey = function (keys, architecture, callback) {
 	spawnEx(args, keys, callback)
 }
 
-module.exports.deleteKey = function (keys, architecture, callback) {
+module.exports.deleteKey = function(keys, architecture, callback) {
 	if (typeof architecture === 'function') {
 		callback = architecture
 		architecture = OS_ARCH_AGNOSTIC
@@ -286,7 +286,7 @@ module.exports.deleteKey = function (keys, architecture, callback) {
 	spawnEx(args, keys, callback)
 }
 
-module.exports.deleteValue = function (keys, architecture, callback) {
+module.exports.deleteValue = function(keys, architecture, callback) {
 	if (typeof architecture === 'function') {
 		callback = architecture
 		architecture = OS_ARCH_AGNOSTIC
@@ -301,7 +301,7 @@ module.exports.deleteValue = function (keys, architecture, callback) {
 	spawnEx(args, keys, callback)
 }
 
-module.exports.putValue = function (map, architecture, callback) {
+module.exports.putValue = function(map, architecture, callback) {
 	if (typeof architecture === 'function') {
 		callback = architecture
 		architecture = OS_ARCH_AGNOSTIC
@@ -332,7 +332,7 @@ module.exports.putValue = function (map, architecture, callback) {
 	spawnEx(args, values, callback)
 }
 
-module.exports.listUnexpandedValues = function (valuePaths, architecture, callback) {
+module.exports.listUnexpandedValues = function(valuePaths, architecture, callback) {
 	if (architecture === undefined) {
 		callback = undefined
 		architecture = OS_ARCH_AGNOSTIC
@@ -340,7 +340,7 @@ module.exports.listUnexpandedValues = function (valuePaths, architecture, callba
 		callback = architecture
 		architecture = OS_ARCH_AGNOSTIC
 	}
-
+	  
 	if (typeof valuePaths === 'string') {
 		valuePaths = [valuePaths]
 	}
@@ -352,14 +352,14 @@ module.exports.listUnexpandedValues = function (valuePaths, architecture, callba
 
 	const outputStream = through2.obj(helper.vbsOutputTransform)
 
-	cscript.init(function (err) {
+	cscript.init(function(err) {
 		if (err) {
 			return outputStream.emit('error', err)
 		}
 
 		const args = baseCommand('wsRegReadListStream.wsf', architecture)
 
-		const child = execFile(cscript.path(), args, { encoding: 'utf8' }, function (err) {
+		const child = execFile(cscript.path(), args, { encoding: 'utf8' }, function(err) {
 			if (err) {
 				outputStream.emit('error', err)
 			}
@@ -378,62 +378,62 @@ module.exports.listUnexpandedValues = function (valuePaths, architecture, callba
 }
 
 module.exports.promisified = {
-	list: function (keys, architecture = OS_ARCH_AGNOSTIC) {
-		return new Promise(function (resolve, reject) {
-			module.exports.list(keys, architecture, function (err, res) {
+	list: function(keys, architecture = OS_ARCH_AGNOSTIC) {
+		return new Promise(function(resolve, reject) {
+			module.exports.list(keys, architecture, function(err, res) {
 				if (err) {
 					return reject(err)
-				}
-				return resolve(res)
+				} 
+				return resolve(res)	
 			})
 		})
 	},
-	listUnexpandedValues: function (valuePaths, architecture = OS_ARCH_AGNOSTIC) {
-		return new Promise(function (resolve, reject) {
-			module.exports.listUnexpandedValues(valuePaths, architecture, function (err, res) {
+	listUnexpandedValues: function(valuePaths, architecture = OS_ARCH_AGNOSTIC) {
+		return new Promise(function(resolve, reject) {
+			module.exports.listUnexpandedValues(valuePaths, architecture, function(err, res) {
 				if (err) {
 					return reject(err)
-				}
-				return resolve(res)
+				} 
+				return resolve(res)	
 			})
 		})
 	},
-	createKey: function (keys, architecture = OS_ARCH_AGNOSTIC) {
-		return new Promise(function (resolve, reject) {
-			module.exports.createKey(keys, architecture, function (err) {
+	createKey: function(keys, architecture = OS_ARCH_AGNOSTIC) {
+		return new Promise(function(resolve, reject) {
+			module.exports.createKey(keys, architecture, function(err) {
 				if (err) {
 					return reject(err)
-				}
+				} 
 				return resolve()
 			})
 		})
 	},
-	deleteKey: function (keys, architecture = OS_ARCH_AGNOSTIC) {
-		return new Promise(function (resolve, reject) {
-			module.exports.deleteKey(keys, architecture, function (err) {
+	deleteKey: function(keys, architecture = OS_ARCH_AGNOSTIC) {
+		return new Promise(function(resolve, reject) {
+			module.exports.deleteKey(keys, architecture, function(err) {
 				if (err) {
 					return reject(err)
-				}
+				} 
 				return resolve()
 			})
 		})
 	},
-	deleteValue: function (keys, architecture = OS_ARCH_AGNOSTIC) {
-		return new Promise(function (resolve, reject) {
-			module.exports.deleteValue(keys, architecture, function (err) {
+	deleteValue: function(keys, architecture = OS_ARCH_AGNOSTIC) {
+		return new Promise(function(resolve, reject) {
+			module.exports.deleteValue(keys, architecture, function(err) {
 				if (err) {
 					return reject(err)
-				}
+				} 
 				return resolve()
 			})
 		})
 	},
-	putValue: function (map, architecture = OS_ARCH_AGNOSTIC) {
-		return new Promise(function (resolve, reject) {
-			module.exports.putValue(map, architecture, function (err) {
+	putValue: function(map, architecture = OS_ARCH_AGNOSTIC) {
+		return new Promise(function(resolve, reject) {
+			module.exports.putValue(map, architecture, function(err) {
 				if (err) {
 					return reject(err)
-				}
+				} 
 				return resolve()
 			})
 		})
@@ -442,131 +442,131 @@ module.exports.promisified = {
 
 module.exports.arch = {}
 
-module.exports.arch.list = function (keys, callback) {
+module.exports.arch.list = function(keys, callback) {
 	return module.exports.list(keys, OS_ARCH_SPECIFIC, callback)
 }
 
-module.exports.arch.list32 = function (keys, callback) {
+module.exports.arch.list32 = function(keys, callback) {
 	return module.exports.list(keys, OS_ARCH_32BIT, callback)
 }
 
-module.exports.arch.list64 = function (keys, callback) {
+module.exports.arch.list64 = function(keys, callback) {
 	return module.exports.list(keys, OS_ARCH_64BIT, callback)
 }
 
-module.exports.arch.listUnexpandedValues = function (valuePaths, callback) {
+module.exports.arch.listUnexpandedValues = function(valuePaths, callback) {
 	return module.exports.listUnexpandedValues(valuePaths, OS_ARCH_SPECIFIC, callback)
 }
 
-module.exports.arch.listUnexpandedValues32 = function (valuePaths, callback) {
+module.exports.arch.listUnexpandedValues32 = function(valuePaths, callback) {
 	return module.exports.listUnexpandedValues(valuePaths, OS_ARCH_32BIT, callback)
 }
 
-module.exports.arch.listUnexpandedValues64 = function (valuePaths, callback) {
+module.exports.arch.listUnexpandedValues64 = function(valuePaths, callback) {
 	return module.exports.listUnexpandedValues(valuePaths, OS_ARCH_64BIT, callback)
 }
 
-module.exports.arch.createKey = function (keys, callback) {
+module.exports.arch.createKey = function(keys, callback) {
 	return module.exports.createKey(keys, OS_ARCH_SPECIFIC, callback)
 }
 
-module.exports.arch.createKey32 = function (keys, callback) {
+module.exports.arch.createKey32 = function(keys, callback) {
 	return module.exports.createKey(keys, OS_ARCH_32BIT, callback)
 }
 
-module.exports.arch.createKey64 = function (keys, callback) {
+module.exports.arch.createKey64 = function(keys, callback) {
 	return module.exports.createKey(keys, OS_ARCH_64BIT, callback)
 }
 
-module.exports.arch.deleteKey = function (keys, callback) {
+module.exports.arch.deleteKey = function(keys, callback) {
 	return module.exports.deleteKey(keys, OS_ARCH_SPECIFIC, callback)
 }
 
-module.exports.arch.deleteKey32 = function (keys, callback) {
+module.exports.arch.deleteKey32 = function(keys, callback) {
 	return module.exports.deleteKey(keys, OS_ARCH_32BIT, callback)
 }
 
-module.exports.arch.deleteKey64 = function (keys, callback) {
+module.exports.arch.deleteKey64 = function(keys, callback) {
 	return module.exports.deleteKey(keys, OS_ARCH_64BIT, callback)
 }
 
-module.exports.arch.deleteValue = function (keys, callback) {
+module.exports.arch.deleteValue = function(keys, callback) {
 	return module.exports.deleteValue(keys, OS_ARCH_SPECIFIC, callback)
 }
 
-module.exports.arch.deleteValue32 = function (keys, callback) {
+module.exports.arch.deleteValue32 = function(keys, callback) {
 	return module.exports.deleteValue(keys, OS_ARCH_32BIT, callback)
 }
 
-module.exports.arch.deleteValue64 = function (keys, callback) {
+module.exports.arch.deleteValue64 = function(keys, callback) {
 	return module.exports.deleteValue(keys, OS_ARCH_64BIT, callback)
 }
 
-module.exports.arch.putValue = function (keys, callback) {
+module.exports.arch.putValue = function(keys, callback) {
 	return module.exports.putValue(keys, OS_ARCH_SPECIFIC, callback)
 }
 
-module.exports.arch.putValue32 = function (keys, callback) {
+module.exports.arch.putValue32 = function(keys, callback) {
 	return module.exports.putValue(keys, OS_ARCH_32BIT, callback)
 }
 
-module.exports.arch.putValue64 = function (keys, callback) {
+module.exports.arch.putValue64 = function(keys, callback) {
 	return module.exports.putValue(keys, OS_ARCH_64BIT, callback)
 }
 
 module.exports.arch.promisified = {
-	list: function (keys) {
+	list: function(keys) {
 		return module.exports.promisified.list(keys, OS_ARCH_SPECIFIC)
 	},
-	list32: function (keys) {
+	list32: function(keys) {
 		return module.exports.promisified.list(keys, OS_ARCH_32BIT)
 	},
-	list64: function (keys) {
+	list64: function(keys) {
 		return module.exports.promisified.list(keys, OS_ARCH_64BIT)
 	},
-	listUnexpandedValues: function (valuePaths) {
+	listUnexpandedValues: function(valuePaths) {
 		return module.exports.promisified.listUnexpandedValues(valuePaths, OS_ARCH_SPECIFIC)
 	},
-	listUnexpandedValues32: function (valuePaths) {
+	listUnexpandedValues32: function(valuePaths) {
 		return module.exports.promisified.listUnexpandedValues(valuePaths, OS_ARCH_32BIT)
 	},
-	listUnexpandedValues64: function (valuePaths) {
+	listUnexpandedValues64: function(valuePaths) {
 		return module.exports.promisified.listUnexpandedValues(valuePaths, OS_ARCH_64BIT)
 	},
-	createKey: function (keys) {
+	createKey: function(keys) {
 		return module.exports.promisified.createKey(keys, OS_ARCH_SPECIFIC)
 	},
-	createKey32: function (keys) {
+	createKey32: function(keys) {
 		return module.exports.promisified.createKey(keys, OS_ARCH_32BIT)
 	},
-	createKey64: function (keys) {
+	createKey64: function(keys) {
 		return module.exports.promisified.createKey(keys, OS_ARCH_64BIT)
 	},
-	deleteKey: function (keys) {
+	deleteKey: function(keys) {
 		return module.exports.promisified.deleteKey(keys, OS_ARCH_SPECIFIC)
 	},
-	deleteKey32: function (keys) {
+	deleteKey32: function(keys) {
 		return module.exports.promisified.deleteKey(keys, OS_ARCH_32BIT)
 	},
-	deleteKey64: function (keys) {
+	deleteKey64: function(keys) {
 		return module.exports.promisified.deleteKey(keys, OS_ARCH_64BIT)
 	},
-	deleteValue: function (keys) {
+	deleteValue: function(keys) {
 		return module.exports.promisified.deleteValue(keys, OS_ARCH_SPECIFIC)
 	},
-	deleteValue32: function (keys) {
+	deleteValue32: function(keys) {
 		return module.exports.promisified.deleteValue(keys, OS_ARCH_32BIT)
 	},
-	deleteValue64: function (keys) {
+	deleteValue64: function(keys) {
 		return module.exports.promisified.deleteValue(keys, OS_ARCH_64BIT)
 	},
-	putValue: function (keys) {
+	putValue: function(keys) {
 		return module.exports.promisified.putValue(keys, OS_ARCH_SPECIFIC)
 	},
-	putValue32: function (keys) {
+	putValue32: function(keys) {
 		return module.exports.promisified.putValue(keys, OS_ARCH_32BIT)
 	},
-	putValue64: function (keys) {
+	putValue64: function(keys) {
 		return module.exports.promisified.putValue(keys, OS_ARCH_64BIT)
 	},
 }
